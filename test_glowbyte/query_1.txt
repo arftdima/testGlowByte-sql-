@@ -4,3 +4,12 @@ case
  else it.price * (select v.rate from test_glowbyte.rates v where v.currency = it.currency and v.date = (select max(date) from test_glowbyte.rates r where r.currency =  it.currency group by r.currency))
 end as 'price_in_byn '
 from test_glowbyte.items it;
+
+version_2: 	
+select f.item_id,
+case
+ when f.currency = 'BYN' then f.price
+ else f.price * (select r.rate from test_glowbyte.rates r where r.date = f.date and r.currency = f.currency)
+end as 'price_in_byn '
+from (select it.*, r.date from test_glowbyte.items it left join (
+			select v.currency, max(v.date) as date from test_glowbyte.rates v group by v.currency) r on it.currency = r.currency) f;
