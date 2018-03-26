@@ -1,0 +1,6 @@
+select it.item_id, 
+case
+ when it.currency = 'BYN' then it.price
+ else it.price * (select v.rate from test_glowbyte.rates v where v.currency = it.currency and v.date = (select max(date) from test_glowbyte.rates r where r.currency =  it.currency group by r.currency))
+end as 'price_in_byn '
+from test_glowbyte.items it;

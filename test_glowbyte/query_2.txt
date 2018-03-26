@@ -1,0 +1,5 @@
+select t.transaction_id, c.customer_id, t.amount_byn, t.transaction_dttm, 
+datediff(t.transaction_dttm, (select min(transaction_dttm) from test_glowbyte.transactions v where v.customer_id = t.customer_id group by v.customer_id)) as 'days_count',
+case when year(c.start_dttm) = year(t.transaction_dttm) then 'yes' else 'no' end as 'new_cust_flg'
+from test_glowbyte.transactions t, test_glowbyte.customers c
+where t.customer_id = c.customer_id;
